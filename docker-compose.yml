@@ -3,10 +3,10 @@ version: '3.1'
 services:
 
   php8:
-    image: keinos/php8-jit:latest
+    image: php:8.0
     container_name: php8
     restart: always
     volumes:
       - ./php:/app
     working_dir: /app
-    command: "php loop.php"
+    command: [tail, '-f', /dev/null]
