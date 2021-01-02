@@ -1,4 +1,4 @@
-# Experiments with PHP 8.x.x (beta)
+# Experiments with PHP 8.0
 ```sh
 $ docker-compose up -d
 $ docker exec -it php8 sh
