@@ -1,8 +1,13 @@
 # Experiments with PHP 8.0
 ```sh
-$ docker-compose up -d
-$ docker exec -it php8 sh
+$ make build
+$ make up
+$ make console
+// do something
+// ctrl-d
+$ make down
 ```
+
 # Links
 Maciek, thanks for it:  
 https://stitcher.io/blog/new-in-php-8  

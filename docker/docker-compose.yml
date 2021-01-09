@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+
+  php8:
+    image: ${DEV_IMAGE}
+    container_name: ${ALIAS}-application
+    restart: on-failure
+    volumes:
+      - ../:/application
+    working_dir: /application
+    command: [tail, '-f', /dev/null]
