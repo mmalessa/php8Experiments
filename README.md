@@ -3,8 +3,6 @@
 $ make build
 $ make up
 $ make console
-// do something
-// ctrl-d
 $ make down
 ```
 
