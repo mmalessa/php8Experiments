@@ -1,22 +1,18 @@
-ALIAS              = php8experiments
-BUILD_IMAGE_CLI   ?= php:8.0-cli
+APP_NAME			= php8experiments
+BASE_IMAGE			?= php:8.1-cli
 ####
 
-.DEFAULT_GOAL      = help
-PLATFORM          ?= $(shell uname -s)
-EXEC_PHP           = php
-BIN                = $(ALIAS)-application
-REGISTRY          ?= localhost:5000
-DOCKER_GATEWAY    ?= $(shell if [ 'Linux' = "${PLATFORM}" ]; then ip addr show docker0 | awk '$$1 == "inet" {print $$2}' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'; fi)
-COMPOSE            = docker-compose
-BASE_IMAGE_CLI    ?= $(BIN)-php-cli:latest
-BASE_DOCKERFILE   ?= docker/base/php/Dockerfile
-DEV_PATH          ?= docker/dev
-DEV_DOCKERFILE    ?= $(DEV_PATH)/php/Dockerfile
-IMAGE             ?= $(REGISTRY)/$(BIN)
-TAG               ?= $(VERSION)
-DEVELOPER_UID     ?= $(shell id -u)
+DOCKER_COMPOSE		= docker-compose
+DEV_PATH			?= docker/dev
+DEV_DOCKERFILE		?= $(DEV_PATH)/php/Dockerfile
+APP_IMAGE			= $(APP_NAME)-app
+CONTAINER_NAME		= $(APP_NAME)-app
 
+PLATFORM			?= $(shell uname -s)
+DEVELOPER_UID		?= $(shell id -u)
+DOCKER_GATEWAY		?= $(shell if [ 'Linux' = "${PLATFORM}" ]; then ip addr show docker0 | awk '$$1 == "inet" {print $$2}' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'; fi)
+
+.DEFAULT_GOAL      = help
 
 ARG := $(word 2, $(MAKECMDGOALS))
 %:
@@ -27,20 +23,25 @@ help:
 	@echo && $(MAKE) -s env-info
 
 build: ## Build image
-	@docker build -t $(REGISTRY)/$(BASE_IMAGE_CLI)-dev         \
-	--build-arg BASE_IMAGE=$(BUILD_IMAGE_CLI)   \
-	--build-arg DEVELOPER_UID=$(DEVELOPER_UID)             \
+	@docker build -t $(APP_IMAGE)					\
+	--build-arg BASE_IMAGE=$(BASE_IMAGE)			\
+	--build-arg DEVELOPER_UID=$(DEVELOPER_UID)		\
 	-f $(DEV_DOCKERFILE) .
 
 up: ## Start the project docker containers
-	@cd ./docker && $(COMPOSE) up -d
+	@cd ./docker && \
+	COMPOSE_PROJECT_NAME=$(APP_NAME) \
+	APP_IMAGE=$(APP_IMAGE) \
+	CONTAINER_NAME=$(CONTAINER_NAME) \
+	$(DOCKER_COMPOSE) up -d
 
 down: ## Remove the docker containers
-	@cd ./docker && $(COMPOSE) down
-
-stop: ## Stop the docker containers
-	@cd ./docker && $(COMPOSE) stop
+	@cd ./docker && \
+	COMPOSE_PROJECT_NAME=$(APP_NAME) \
+	APP_IMAGE=$(APP_IMAGE) \
+	CONTAINER_NAME=$(CONTAINER_NAME) \
+	$(DOCKER_COMPOSE) down
 
 console: ## Enter into application container
-	@if [ "${ARG}" = 'root' ] || [ "${ARG}" = 'r' ]; then docker exec -it -u root $(BIN) bash; fi
-	@if [ "${ARG}" = '' ] || [ "${ARG}" = 'developer' ]; then docker exec -it $(BIN) bash; fi
+	docker exec -it -u developer $(CONTAINER_NAME) bash
+

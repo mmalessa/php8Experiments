@@ -3,8 +3,8 @@ version: '3.1'
 services:
 
   php8:
-    image: ${DEV_IMAGE}
-    container_name: ${ALIAS}-application
+    image: ${APP_IMAGE}
+    container_name: ${CONTAINER_NAME}
     restart: on-failure
     volumes:
       - ../:/application

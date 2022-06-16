@@ -20,11 +20,11 @@ RUN docker-php-ext-install sockets bcmath zip \
     && rm -rf /var/lib/apt/lists/* \
     && pecl config-set php_ini /usr/local/etc/php/conf.d/over.ini
 
-# php-amqp for php8 workaround
-RUN docker-php-source extract && \
-    mkdir /usr/src/php/ext/amqp && \
-    curl -L https://github.com/php-amqp/php-amqp/archive/master.tar.gz | tar -xzC /usr/src/php/ext/amqp --strip-components=1 && \
-    docker-php-ext-install amqp
+# # php-amqp for php8 workaround
+# RUN docker-php-source extract && \
+#     mkdir /usr/src/php/ext/amqp && \
+#     curl -L https://github.com/php-amqp/php-amqp/archive/master.tar.gz | tar -xzC /usr/src/php/ext/amqp --strip-components=1 && \
+#     docker-php-ext-install amqp
 
 RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini && \
     rm -rf /var/lib/apt/lists/* && \
